@@ -1,0 +1,49 @@
+{
+    "vehicles": [
+	{
+	    "id": "1",
+	    "capacity": 2,
+	    "distance_price": 1,
+            "coord": { "x": 2, "y": 0 }
+	},
+	{
+	    "id": "2",
+	    "capacity": 3,
+	    "distance_price": 1,
+            "coord": { "x": 2, "y": 5 }
+	}
+    ],
+    "shipments": [
+        {
+            "id": "0",
+            "pickup": { "x": 1, "y": 4 },
+            "delivery": { "x": 1, "y": 0 },
+            "capacityDemand": 1
+        },
+        {
+            "id": "1",
+            "pickup": { "x": 1, "y": 5 },
+            "delivery": { "x": 1, "y": 1 },
+            "capacityDemand": 1
+        },
+        {
+            "id": "2",
+            "pickup": { "x": 2, "y": 4 },
+            "delivery": { "x": 2, "y": 1 },
+            "capacityDemand": 1
+        },
+        {
+            "id": "3",
+            "pickup": { "x": 3, "y": 4 },
+            "delivery": { "x": 3, "y": 0 },
+            "capacityDemand": 1
+        },
+        {
+            "id": "4",
+            "pickup": { "x": 3, "y": 5 },
+            "delivery": { "x": 3, "y": 1 },
+            "capacityDemand": 1
+        }
+    ]
+}
+

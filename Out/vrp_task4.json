@@ -1,0 +1,25 @@
+{
+    "vehicles": [
+	{
+	    "id": "1",
+	    "capacity": 100,
+	    "distance_price": 1,
+            "coord": { "x": 0, "y": 4 }
+	}
+    ],
+    "shipments": [
+        {
+            "id": "0",
+            "pickup": { "x": 0, "y": 1 },
+            "delivery": { "x": 0, "y": 0 },
+            "capacityDemand": 5
+        },
+        {
+            "id": "1",
+            "pickup": { "x": 1, "y": 1 },
+            "delivery": { "x": 1, "y": 1 },
+            "capacityDemand": 5
+        }
+    ]
+}
+

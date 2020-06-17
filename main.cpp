@@ -6,36 +6,37 @@
 #include <list>
 #include <thread>
 #include <stdio.h>
+#include <ctime>
 
-const unsigned int INF = 1e9;
-unsigned int COST;
-unsigned int TIMER;
-unsigned int JOB;
+const long long INF = 1e9;
+long long COST;
+long long TIMER;
+long long JOB;
 
 struct Act
 {
 	std::string _type;
 	std::string _jobId;
-	int _arrTime;
-	int _endTime;
+	long long _arrTime;
+	long long _endTime;
 };
 struct Routes
 {
 	std::string _vehicleId;
-	int _start;
-	int _end;
+	long long _start;
+	long long _end;
 	std::vector< Act > _act;
 };
-struct Point {int i, j;} point;
+struct Point {long long i, j;} point;
 struct Shipment
 {
 	std::string _id;
-	unsigned int _pickup_x;
-	unsigned int _pickup_y;
-	unsigned int _delivery_x;
-	unsigned int _delivery_y;
-	unsigned int _capacityDemand;
-	unsigned int _cost;
+	long long _pickup_x;
+	long long _pickup_y;
+	long long _delivery_x;
+	long long _delivery_y;
+	long long _capacityDemand;
+	long long _cost;
 	friend bool operator== (const Shipment &s1, const Shipment &s2);
     	friend bool operator!= (const Shipment &s1, const Shipment &s2);
 };
@@ -58,44 +59,44 @@ std::list< Shipment > pick_upped;
 class Vehicle
 {
 public:
-	Vehicle(std::string id, unsigned int capacity, unsigned int distance_price, unsigned int home_coord_x, unsigned int home_coord_y, int N, int M);
+	Vehicle(std::string id, long long capacity, long long distance_price, long long home_coord_x, long long home_coord_y, long long N, long long M);
 	void add_task(const Shipment &shipment);
 	void delete_task(const Shipment &shipment);
-	const Shipment find_task_in_shipments(const unsigned int shipment_id);
-	const Shipment find_task_in_delivery(const unsigned int shipment_id);
+	const Shipment find_task_in_shipments(const long long shipment_id);
+	const Shipment find_task_in_delivery(const long long shipment_id);
 	void print();
-	void calc_map(int x, int y);
-	const unsigned int get_capacity();
+	void calc_map(long long x, long long y);
+	const long long get_capacity();
 	void calc_shipments_pickup();
 	void calc_shipments_delivery();
 	void calc_map_from_pickup_to_delivery();
 	void calc_map_home();
-	unsigned int _coord_x;
-	unsigned int _coord_y;
+	long long _coord_x;
+	long long _coord_y;
 	std::string _id; 
-	unsigned int shipment_cost(std::string id);
-	unsigned int delivery_cost(std::string id);
-	unsigned int pick_up(int shipment_id);
-	unsigned int delivery(int shipment_id);
+	long long shipment_cost(std::string id);
+	long long delivery_cost(std::string id);
+	long long pick_up(long long shipment_id);
+	long long delivery(long long shipment_id);
 	bool is_shipments_empty();
 	bool is_delivery_empty();
 	void clear_cost();
-	unsigned int go_home();
+	long long go_home();
 	Routes _rout;
 private:
-	const unsigned int _capacity; 
-	unsigned int _capacity_picked; 
-	const unsigned int _distance_price;
-	const unsigned int _home_coord_x;
-	const unsigned int _home_coord_y;
-	std::vector< std::vector< unsigned int > > _map;
+	const long long _capacity; 
+	long long _capacity_picked; 
+	const long long _distance_price;
+	const long long _home_coord_x;
+	const long long _home_coord_y;
+	std::vector< std::vector< long long > > _map;
 	std::list< Shipment > _shipments;
 	std::list< Shipment > _delivery;
-	int _N, _M;
-	int _start, _end;
+	long long _N, _M;
+	long long _start, _end;
 };
 
-Vehicle::Vehicle(std::string id, unsigned int capacity, unsigned int distance_price, unsigned int home_coord_x, unsigned int home_coord_y, int N, int M) :
+Vehicle::Vehicle(std::string id, long long capacity, long long distance_price, long long home_coord_x, long long home_coord_y, long long N, long long M) :
 	_id(id),
 	_capacity(capacity), 
 	_capacity_picked(0),
@@ -108,7 +109,7 @@ Vehicle::Vehicle(std::string id, unsigned int capacity, unsigned int distance_pr
 	_M(M)
 {
 	_map.resize(M);
-	for(int i = 0; i < M; i++) {
+	for(long long i = 0; i < M; i++) {
 		_map[i].resize(N);
 	}
 	_rout._vehicleId = _id;
@@ -133,7 +134,7 @@ void Vehicle::delete_task(const Shipment &shipment)
 {
 	_shipments.remove(shipment);
 }
-const Shipment Vehicle::find_task_in_shipments(const unsigned int shipment_id)
+const Shipment Vehicle::find_task_in_shipments(const long long shipment_id)
 {
 	for(auto &s : _shipments) {
 		if(s._id == std::to_string(shipment_id)) {
@@ -144,7 +145,7 @@ const Shipment Vehicle::find_task_in_shipments(const unsigned int shipment_id)
 	s._id = "NULL";
 	return s;
 }
-const Shipment Vehicle::find_task_in_delivery(const unsigned int shipment_id) 
+const Shipment Vehicle::find_task_in_delivery(const long long shipment_id) 
 {
 	for(auto &d : _delivery) {
 		if(d._id == std::to_string(shipment_id)) {
@@ -183,31 +184,30 @@ void Vehicle::print()
 		}
 		std::cout << std::endl;
 	}
-	std::cout << std::endl << std::endl;
 }
-const unsigned int Vehicle::get_capacity()
+const long long Vehicle::get_capacity()
 {
 	return (_capacity - _capacity_picked);
 }
-void Vehicle::calc_map(int x, int y)
+void Vehicle::calc_map(long long x, long long y)
 {
-	for(int i = 0; i < _map.size(); i++) {
-		for(int j = 0; j < _map[i].size(); j++) {
+	for(long long i = 0; i < _map.size(); i++) {
+		for(long long j = 0; j < _map[i].size(); j++) {
 			_map[i][j] = 0;
 		}
 	}
 	_map[x][y] = 1;
-	int head,tail;         
+	long long head,tail;         
 	Point q[_N * _M];      
-	int di[4] = { -1, 0, 1,  0};
-	int dj[4] = {  0, 1, 0, -1};
+	long long di[4] = { -1, 0, 1,  0};
+	long long dj[4] = {  0, 1, 0, -1};
 	head = tail = 0;
 	q[tail].i = x;
 	q[tail++].j = y;  
 
 	while (head < tail) {
 		Point p = q[head++];          
-		for (int k = 0; k < 4; k++) {
+		for (long long k = 0; k < 4; k++) {
 			Point newp;
 			newp.i = p.i + di[k];
 			newp.j = p.j + dj[k];
@@ -222,7 +222,7 @@ void Vehicle::calc_map(int x, int y)
 void Vehicle::calc_shipments_pickup()
 {
 	for(auto &s : _shipments) {
-		s._cost += _distance_price*(_map[s._pickup_x][s._pickup_y] - 1);
+		s._cost += 2 * _distance_price * (_map[s._pickup_x][s._pickup_y] - 1);
 	}
 }
 
@@ -252,7 +252,7 @@ void Vehicle::calc_map_home()
 		d._cost += _distance_price*_map[_home_coord_x][_home_coord_y];
 	}
 }
-unsigned int Vehicle::shipment_cost(std::string id)
+long long Vehicle::shipment_cost(std::string id)
 {
 	for(auto &s : _shipments) {
 		if(s._id == id)
@@ -260,7 +260,7 @@ unsigned int Vehicle::shipment_cost(std::string id)
 	}
 	return INF;
 }
-unsigned int Vehicle::delivery_cost(std::string id)
+long long Vehicle::delivery_cost(std::string id)
 {
 	for(auto &d : _delivery) {
 		if(d._id == id)
@@ -268,7 +268,7 @@ unsigned int Vehicle::delivery_cost(std::string id)
 	}
 	return INF;
 }
-unsigned int Vehicle::pick_up(int shipment_id)
+long long Vehicle::pick_up(long long shipment_id)
 {
 	calc_map(_coord_x, _coord_y);
 	for(auto &s : _shipments) {
@@ -292,11 +292,10 @@ unsigned int Vehicle::pick_up(int shipment_id)
 	_rout._act.push_back(act);
 	return _map[_coord_x][_coord_y] * _distance_price;
 }
-unsigned int Vehicle::delivery(int shipment_id)
+long long Vehicle::delivery(long long shipment_id)
 {
 	calc_map(_coord_x, _coord_y);
 	for(auto &d : _delivery) {
-		std::cout << "id = " << d._id << std::endl;
 		if(d._id == std::to_string(shipment_id)) {
 			_coord_x = d._delivery_x;
 			_coord_y = d._delivery_y;
@@ -329,15 +328,12 @@ void Vehicle::clear_cost()
 		d._cost = 0;
 	}
 }
-unsigned int Vehicle::go_home()
+long long Vehicle::go_home()
 {
 	calc_map(_coord_x, _coord_y);
 	_rout._end = TIMER;
 	return (_map[_home_coord_x][_home_coord_y] - 1) * _distance_price;
-
 }
-
-
 
 void display_vehicles(const Json::Value &vpr_task_root, const int &i, int &N, int &M);
 void display_shipments(const Json::Value &vpr_task_root, const int &j, int &N, int &M);
@@ -345,30 +341,28 @@ Vehicle init(const Json::Value &vpr_task_root, const int &i, int N, int M);
 
 int main()
 {
+    	long long start_time = clock();
 	Json::Reader reader;
 	Json::Value vpr_task_root;
 
-	std::ifstream vpr_task_file("vpr_task.json");
+	std::ifstream vpr_task_file("vrp_task7.json");
     	vpr_task_file >> vpr_task_root;
 	int i = 0, j = 0, M = 0, N = 0;
-	
+
 	std::vector< Vehicle > vehicles;
 
 	while(!vpr_task_root["vehicles"][i]["id"].isNull()) {
 	    	display_vehicles(vpr_task_root, i, N, M);
 		i++;
 	}
-	
-	for(int v = 0; v < i; v++) {
-		vehicles.push_back( init(vpr_task_root, v, N + 1, M + 1) );	
-		//vehicles[v].print();
-	}
-	
 	while(!vpr_task_root["shipments"][j]["id"].isNull()) {
 	    	display_shipments(vpr_task_root, j, N, M);
 		j++;
 	}
-for(int k = 0; k < 2 * j; k++) {
+	for(long long v = 0; v < i; v++) {
+		vehicles.push_back( init(vpr_task_root, v, N + 1, M + 1) );	
+	}	
+for(long long k = 0; k < 2 * j; k++) { 
 
 	for(int s = 0; s < j; s++) {
 		Shipment shipment;
@@ -380,117 +374,118 @@ for(int k = 0; k < 2 * j; k++) {
 		shipment._capacityDemand = vpr_task_root["shipments"][s]["capacityDemand"].asUInt();
 		shipment._cost = 0;
 
-		for(int v = 0; v < i; v++) {
+		for(long long v = 0; v < i; v++) {
 			if( vehicles[v].get_capacity() >= shipment._capacityDemand ) {
 				vehicles[v].add_task(shipment);
 			}	
 		}	
-	}
-
+	}	
 ////////////////////////////////////////////////////////////////////////////////////////////////
   	std::vector< std::thread > tcalc_map;
-	for (int v = 0; v < i; v++) {
+	for (long long v = 0; v < i; v++) {
 		tcalc_map.push_back( std::thread(&Vehicle::calc_map, &vehicles[v], vehicles[v]._coord_x, vehicles[v]._coord_y) );
 	}
 	for (auto & th : tcalc_map)
 		th.join();
-vehicles[0].print();vehicles[1].print();
 ////////////////////////////////////////////////////////////////////////////////////////////////
+
   	std::vector< std::thread > tcalc_shipments_pickup;
-	for (int v = 0; v < i; v++) {
+	for (long long v = 0; v < i; v++) {
 		tcalc_shipments_pickup.push_back( std::thread(&Vehicle::calc_shipments_pickup, &vehicles[v]) );
 	}
 	for (auto & th : tcalc_shipments_pickup)
 		th.join();
 ////////////////////////////////////////////////////////////////////////////////////////////////
   	std::vector< std::thread > tcalc_shipments_delivery;
-	for (int v = 0; v < i; v++) {
+	for (long long v = 0; v < i; v++) {
 		tcalc_shipments_delivery.push_back( std::thread(&Vehicle::calc_shipments_delivery, &vehicles[v]) );
 	}
 	for (auto & th : tcalc_shipments_delivery)
 		th.join();
 ////////////////////////////////////////////////////////////////////////////////////////////////
+/*
   	std::vector< std::thread > tcalc_map_from_pickup_to_delivery;
-	for (int v = 0; v < i; v++) {
+	for (long long v = 0; v < i; v++) {
 		tcalc_map_from_pickup_to_delivery.push_back( std::thread(&Vehicle::calc_map_from_pickup_to_delivery, &vehicles[v]) );
 	}
 	for (auto & th : tcalc_map_from_pickup_to_delivery)
 		th.join();
+*/
 ////////////////////////////////////////////////////////////////////////////////////////////////
+/*
   	std::vector< std::thread > tcalc_map_home;
-	for (int v = 0; v < i; v++) {
+	for (long long v = 0; v < i; v++) {
 		tcalc_map_home.push_back( std::thread(&Vehicle::calc_map_home, &vehicles[v]) );
 	}
 	for (auto & th : tcalc_map_home)
-		th.join();
-
-	std::vector< std::vector< unsigned int > > _distance;
+		th.join();	
+*/
+	std::vector< std::vector< long long > > _distance;
 	_distance.resize(i);
-	for(int v = 0; v < i; v++) {
+	for(long long v = 0; v < i; v++) {
 		_distance[v].resize(j);
-		for(int s = 0; s < j; s++) {
+		for(long long s = 0; s < j; s++) {
 			_distance[v][s] = std::min(	vehicles[v].shipment_cost(std::to_string(s)),
 							vehicles[v].delivery_cost(std::to_string(s)));	
 		}	
 	}
+/*
+	std::cout << "-----------------Distance-----------------" << std::endl;
 
+	for(long long v = 0; v < i; v++) {
+		for(long long s = 0; s < j; s++) {
+			std::cout << _distance[v][s] << " ";
+		}
+		std::cout << std::endl;	
+	}
+*/
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //greedy
 ////////////////////////////////////////////////////////////////////////////////////////////////
-	unsigned int mini = INF;
-	std::pair< unsigned int, unsigned int > coord_to_go;
-	for(int v = 0; v < i; v++) {
-		for(int s = 0; s < j; s++) {
+	long long mini = INF;
+	std::pair< long long, long long > coord_to_go;
+	for(long long v = 0; v < i; v++) {
+		for(long long s = 0; s < j; s++) {
 			if(_distance[v][s] < mini) {
 				mini = _distance[v][s];
 				coord_to_go = std::make_pair(v, s);
 			}
 		}	
 	}
-	printf("\033[31mVEHICLE %i %s %i %s", coord_to_go.first, " GOES TO ",  coord_to_go.second, "\033[0m\n");
+	printf("\033[31mVEHICLE %llu %s %llu %s", coord_to_go.first, " GOES TO ",  coord_to_go.second, "\033[0m\n");
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
-	for(int v = 0; v < i; v++) {
+	for(long long v = 0; v < i; v++) {
 		if(vehicles[v]._id == std::to_string(coord_to_go.first + 1)) {
 			//// найти вид работы
 			Shipment s = vehicles[v].find_task_in_shipments(coord_to_go.second);
 			Shipment d = vehicles[v].find_task_in_delivery(coord_to_go.second);
-			std::cout << "----FIND----" << std::endl;
 			if(s._id != "NULL") {
 				COST += vehicles[v].pick_up(coord_to_go.second);
-				std::cout << "----NOTNULL----" << std::endl;
 			}
 			else {
-				std::cout << "----NULL----" << std::endl;
 				COST += vehicles[v].delivery(coord_to_go.second);
-				//vehicles[v].print();	
 			}
 			////
 		}
 	}
-	for(int v = 0; v < i; v++) {
+	for(long long v = 0; v < i; v++) {
 		vehicles[v].clear_cost();
 	}
-
-
 	std::cout << "COST = " << COST << std::endl;
-
 }
-
-	for(int v = 0; v < i; v++) {
+	for(long long v = 0; v < i; v++) {
 		COST += vehicles[v].go_home();
 	}
 
 ///////////////////////////////////////////////////////////
 	std::vector <Routes> routes;
-	for(int v = 0; v < i; v++) {
+	for(long long v = 0; v < i; v++) {
 		if(vehicles[v]._rout._act.size() != 0) {
 			routes.push_back(vehicles[v]._rout);
 		}
 	}
-
 
 	Json::Value root;
     	root["cost"] = COST;
@@ -498,7 +493,11 @@ vehicles[0].print();vehicles[1].print();
 	int idx = 0;
 	for (const auto& r : routes) {
 		Json::Value routInfo;
+		routInfo["end"] = r._end;
+		routInfo["start"] = r._start;
+		routInfo["vehicleId"] = r._vehicleId;
 		int idy = 0;
+		Json::Value act;
 		for (const auto& a : r._act) {
 			Json::Value actInfo;
 			actInfo["endTime"] = a._endTime;
@@ -510,17 +509,13 @@ vehicles[0].print();vehicles[1].print();
 		}
 		routInfo["act"] = act;
 		rout[idx] = routInfo;
-		routInfo["end"] = r._end;
-		routInfo["start"] = r._start;
-		routInfo["vehicleId"] = r._vehicleId;
-		Json::Value act;
 		idx++;
 	}
     	root["routes"] = rout;
 
 	Json::StyledWriter writer;
 	std::string strJson = writer.write(root);
-	std::ofstream out("hello.json", std::ios::app);
+	std::ofstream out("vrp_task_solution.json", std::ios::app);
 	if (out.is_open())
 	{
 		out << strJson << std::endl;
@@ -529,21 +524,19 @@ vehicles[0].print();vehicles[1].print();
 
 /////////////////////////////////////////////////////////////////////////////////
 
-	std::cout << "N = " << N << " M = " << M << std::endl;
-
+    	long long end_time = clock();
+	long long search_time = end_time - start_time;
+	std::cout << "search_time = " << search_time / 1000.0 << std::endl;
 	return 0;
 }       
-
-
-
 
 Vehicle init(const Json::Value &vpr_task_root, const int &i, int N, int M)
 {
     	std::string _id = vpr_task_root["vehicles"][i]["id"].asString();
-	unsigned int _capacity = vpr_task_root["vehicles"][i]["capacity"].asUInt();
-	unsigned int _distance_price = vpr_task_root["vehicles"][i]["distance_price"].asUInt();
-	unsigned int _coord_x = vpr_task_root["vehicles"][i]["coord"]["x"].asUInt();
-	unsigned int _coord_y = vpr_task_root["vehicles"][i]["coord"]["y"].asUInt();
+	long long _capacity = vpr_task_root["vehicles"][i]["capacity"].asUInt();
+	long long _distance_price = vpr_task_root["vehicles"][i]["distance_price"].asUInt();
+	long long _coord_x = vpr_task_root["vehicles"][i]["coord"]["x"].asUInt();
+	long long _coord_y = vpr_task_root["vehicles"][i]["coord"]["y"].asUInt();
 	Vehicle temp(_id, _capacity, _distance_price, _coord_x, _coord_y, N, M);
 	return temp;
 	
@@ -551,36 +544,28 @@ Vehicle init(const Json::Value &vpr_task_root, const int &i, int N, int M)
 void display_vehicles(const Json::Value &vpr_task_root, const int &i, int &N, int &M)
 {
     	std::string _id = vpr_task_root["vehicles"][i]["id"].asString();
-	unsigned int _capacity = vpr_task_root["vehicles"][i]["capacity"].asUInt();
-	unsigned int _distance_price = vpr_task_root["vehicles"][i]["distance_price"].asUInt();
-	unsigned int _coord_x = vpr_task_root["vehicles"][i]["coord"]["x"].asUInt();
-	unsigned int _coord_y = vpr_task_root["vehicles"][i]["coord"]["y"].asUInt();
+	long long _capacity = vpr_task_root["vehicles"][i]["capacity"].asUInt();
+	long long _distance_price = vpr_task_root["vehicles"][i]["distance_price"].asUInt();
+	long long _coord_x = vpr_task_root["vehicles"][i]["coord"]["x"].asUInt();
+	long long _coord_y = vpr_task_root["vehicles"][i]["coord"]["y"].asUInt();
 	if(M < _coord_x) {
 		M = _coord_x;		
 	}	
 	if(N < _coord_y) {
 		N = _coord_y;		
 	}
-/*
-	std::cout << "In display_vpr_task" << std::endl;
-	std::cout << "id             :" << _id << std::endl;
-	std::cout << "capacity       :" << _capacity << std::endl;
-	std::cout << "distance_price :" << _distance_price << std::endl;
-	std::cout << "coord_x        :" << _coord_x << std::endl;
-	std::cout << "coord_y        :" << _coord_y << std::endl;
-*/
 }
 
 void display_shipments(const Json::Value &vpr_task_root, const int &j, int &N, int &M)
 {
     	std::string _id = vpr_task_root["shipments"][j]["id"].asString();
-	unsigned int _pickup_x = vpr_task_root["shipments"][j]["pickup"]["x"].asUInt();
-	unsigned int _pickup_y = vpr_task_root["shipments"][j]["pickup"]["y"].asUInt();
-	unsigned int _delivery_x = vpr_task_root["shipments"][j]["delivery"]["x"].asUInt();
-	unsigned int _delivery_y = vpr_task_root["shipments"][j]["delivery"]["y"].asUInt();
-	unsigned int _capacityDemand = vpr_task_root["shipments"][j]["capacityDemand"].asUInt();
-	unsigned int _max_x = std::max(_pickup_x, _delivery_x);
-	unsigned int _max_y = std::max(_pickup_y, _delivery_y);
+	long long _pickup_x = vpr_task_root["shipments"][j]["pickup"]["x"].asUInt();
+	long long _pickup_y = vpr_task_root["shipments"][j]["pickup"]["y"].asUInt();
+	long long _delivery_x = vpr_task_root["shipments"][j]["delivery"]["x"].asUInt();
+	long long _delivery_y = vpr_task_root["shipments"][j]["delivery"]["y"].asUInt();
+	long long _capacityDemand = vpr_task_root["shipments"][j]["capacityDemand"].asUInt();
+	long long _max_x = std::max(_pickup_x, _delivery_x);
+	long long _max_y = std::max(_pickup_y, _delivery_y);
 
 	if(M < _max_x) {
 		M = _max_x;		

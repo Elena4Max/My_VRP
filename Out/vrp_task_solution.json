@@ -1,0 +1,73 @@
+{
+   "cost" : 30,
+   "routes" : [
+      {
+         "act" : [
+            {
+               "arrTime" : 1,
+               "endTime" : 2,
+               "jobId" : "0",
+               "type" : "pickupShipment"
+            },
+            {
+               "arrTime" : 3,
+               "endTime" : 4,
+               "jobId" : "1",
+               "type" : "pickupShipment"
+            },
+            {
+               "arrTime" : 5,
+               "endTime" : 6,
+               "jobId" : "2",
+               "type" : "pickupShipment"
+            },
+            {
+               "arrTime" : 9,
+               "endTime" : 10,
+               "jobId" : "3",
+               "type" : "deliveryShipment"
+            },
+            {
+               "arrTime" : 10,
+               "endTime" : 11,
+               "jobId" : "4",
+               "type" : "deliveryShipment"
+            },
+            {
+               "arrTime" : 11,
+               "endTime" : 12,
+               "jobId" : "5",
+               "type" : "deliveryShipment"
+            },
+            {
+               "arrTime" : 16,
+               "endTime" : 17,
+               "jobId" : "6",
+               "type" : "pickupShipment"
+            },
+            {
+               "arrTime" : 18,
+               "endTime" : 19,
+               "jobId" : "7",
+               "type" : "pickupShipment"
+            },
+            {
+               "arrTime" : 24,
+               "endTime" : 25,
+               "jobId" : "8",
+               "type" : "deliveryShipment"
+            },
+            {
+               "arrTime" : 25,
+               "endTime" : 26,
+               "jobId" : "9",
+               "type" : "deliveryShipment"
+            }
+         ],
+         "end" : 26,
+         "start" : 0,
+         "vehicleId" : "2"
+      }
+   ]
+}
+
