@@ -5,10 +5,27 @@
 #include <vector>
 #include <list>
 #include <thread>
+#include <stdio.h>
 
 const unsigned int INF = 1e9;
 unsigned int COST;
+unsigned int TIMER;
+unsigned int JOB;
 
+struct Act
+{
+	std::string _type;
+	std::string _jobId;
+	int _arrTime;
+	int _endTime;
+};
+struct Routes
+{
+	std::string _vehicleId;
+	int _start;
+	int _end;
+	std::vector< Act > _act;
+};
 struct Point {int i, j;} point;
 struct Shipment
 {
@@ -38,15 +55,6 @@ bool operator!= (const Shipment &s1, const Shipment &s2)
 }
 std::list< Shipment > pick_upped;
 
-
-struct Act
-{
-        std::string _type;
-        std::string _jobId;
-	int _arrTime;
-	int _endTime;
-};
-
 class Vehicle
 {
 public:
@@ -72,6 +80,8 @@ public:
 	bool is_shipments_empty();
 	bool is_delivery_empty();
 	void clear_cost();
+	unsigned int go_home();
+	Routes _rout;
 private:
 	const unsigned int _capacity; 
 	unsigned int _capacity_picked; 
@@ -83,7 +93,6 @@ private:
 	std::list< Shipment > _delivery;
 	int _N, _M;
 	int _start, _end;
-	Act _act;
 };
 
 Vehicle::Vehicle(std::string id, unsigned int capacity, unsigned int distance_price, unsigned int home_coord_x, unsigned int home_coord_y, int N, int M) :
@@ -102,7 +111,9 @@ Vehicle::Vehicle(std::string id, unsigned int capacity, unsigned int distance_pr
 	for(int i = 0; i < M; i++) {
 		_map[i].resize(N);
 	}
-
+	_rout._vehicleId = _id;
+	_rout._start = -1;
+	_rout._end = -1;
 }
 void Vehicle::add_task(const Shipment &shipment)
 {
@@ -269,6 +280,16 @@ unsigned int Vehicle::pick_up(int shipment_id)
 			pick_upped.push_back(s);
 		}	
 	}
+	if(_rout._start == -1) {
+		_rout._start = TIMER;
+	}
+	TIMER += _map[_coord_x][_coord_y] - 1;
+	Act act;
+	act._type = "pickupShipment";
+	act._jobId = std::to_string(JOB); JOB++;
+	act._arrTime = TIMER; TIMER++;
+	act._endTime = TIMER;
+	_rout._act.push_back(act);
 	return _map[_coord_x][_coord_y] * _distance_price;
 }
 unsigned int Vehicle::delivery(int shipment_id)
@@ -284,6 +305,13 @@ unsigned int Vehicle::delivery(int shipment_id)
 			break;
 		}	
 	}
+	TIMER += _map[_coord_x][_coord_y] - 1;
+	Act act;
+	act._type = "deliveryShipment";
+	act._jobId = std::to_string(JOB); JOB++;
+	act._arrTime = TIMER; TIMER++;
+	act._endTime = TIMER;
+	_rout._act.push_back(act);
 	return _map[_coord_x][_coord_y] * _distance_price;
 }
 bool Vehicle::is_shipments_empty()
@@ -301,16 +329,19 @@ void Vehicle::clear_cost()
 		d._cost = 0;
 	}
 }
+unsigned int Vehicle::go_home()
+{
+	calc_map(_coord_x, _coord_y);
+	_rout._end = TIMER;
+	return (_map[_home_coord_x][_home_coord_y] - 1) * _distance_price;
+
+}
+
 
 
 void display_vehicles(const Json::Value &vpr_task_root, const int &i, int &N, int &M);
 void display_shipments(const Json::Value &vpr_task_root, const int &j, int &N, int &M);
 Vehicle init(const Json::Value &vpr_task_root, const int &i, int N, int M);
-void preprocessing(std::vector< std::vector< unsigned int > > &_distance, int i, int j);
-std::pair<unsigned int, unsigned int> assessment(std::vector< std::vector< unsigned int > > &_distance);
-unsigned int min_horizontal(std::vector< std::vector< unsigned int > > &_distance,  unsigned int i, unsigned int j);
-unsigned int min_vertical(std::vector< std::vector< unsigned int > > &_distance,  unsigned int i, unsigned int j);
-
 
 int main()
 {
@@ -404,11 +435,19 @@ vehicles[0].print();vehicles[1].print();
 	}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-//branches and borders
+//greedy
 ////////////////////////////////////////////////////////////////////////////////////////////////
-	preprocessing(_distance, i, j);
-	std::pair< unsigned int, unsigned int > coord_to_go = assessment(_distance);
-	std::cout << "VEHICLE " << coord_to_go.first << " GOES TO  " << coord_to_go.second << std::endl;
+	unsigned int mini = INF;
+	std::pair< unsigned int, unsigned int > coord_to_go;
+	for(int v = 0; v < i; v++) {
+		for(int s = 0; s < j; s++) {
+			if(_distance[v][s] < mini) {
+				mini = _distance[v][s];
+				coord_to_go = std::make_pair(v, s);
+			}
+		}	
+	}
+	printf("\033[31mVEHICLE %i %s %i %s", coord_to_go.first, " GOES TO ",  coord_to_go.second, "\033[0m\n");
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -440,6 +479,55 @@ vehicles[0].print();vehicles[1].print();
 
 }
 
+	for(int v = 0; v < i; v++) {
+		COST += vehicles[v].go_home();
+	}
+
+///////////////////////////////////////////////////////////
+	std::vector <Routes> routes;
+	for(int v = 0; v < i; v++) {
+		if(vehicles[v]._rout._act.size() != 0) {
+			routes.push_back(vehicles[v]._rout);
+		}
+	}
+
+
+	Json::Value root;
+    	root["cost"] = COST;
+	Json::Value rout;
+	int idx = 0;
+	for (const auto& r : routes) {
+		Json::Value routInfo;
+		int idy = 0;
+		for (const auto& a : r._act) {
+			Json::Value actInfo;
+			actInfo["endTime"] = a._endTime;
+			actInfo["arrTime"] = a._arrTime;
+			actInfo["jobId"] = a._jobId;
+			actInfo["type"] = a._type;
+			act[idy] = actInfo;
+			idy++;
+		}
+		routInfo["act"] = act;
+		rout[idx] = routInfo;
+		routInfo["end"] = r._end;
+		routInfo["start"] = r._start;
+		routInfo["vehicleId"] = r._vehicleId;
+		Json::Value act;
+		idx++;
+	}
+    	root["routes"] = rout;
+
+	Json::StyledWriter writer;
+	std::string strJson = writer.write(root);
+	std::ofstream out("hello.json", std::ios::app);
+	if (out.is_open())
+	{
+		out << strJson << std::endl;
+	}
+	out.close();
+
+/////////////////////////////////////////////////////////////////////////////////
 
 	std::cout << "N = " << N << " M = " << M << std::endl;
 
@@ -502,84 +590,3 @@ void display_shipments(const Json::Value &vpr_task_root, const int &j, int &N, i
 	}
 }
 
-void preprocessing(std::vector< std::vector< unsigned int > > &_distance, int  i, int j)
-{
-	unsigned int mini = INF;
-	for(int v = 0; v < i; v++) {
-		mini = INF;
-		for(int s = 0; s < j; s++) {
-			mini = std::min(mini, _distance[v][s]);	
-		}
-		for(int s = 0; s < j; s++) {
-			if(_distance[v][s] != INF) {
-				_distance[v][s] -= mini;
-			}	
-		}	
-	}
-
-	for(int s = 0; s < j; s++) {
-		mini = INF;
-		for(int v = 0; v < i; v++) {
-			mini = std::min(mini, _distance[v][s]);	
-		}
-		for(int v = 0; v < i; v++) {
-			if(_distance[v][s] != INF) {
-				_distance[v][s] -= mini;
-			}
-		}	
-	}
-}
-
-std::pair<unsigned int, unsigned int> assessment(std::vector< std::vector< unsigned int > > &_distance)
-{
-	std::vector< std::vector< unsigned int > > rating;
-	rating.resize(_distance.size());
-	for(int v = 0; v < _distance.size(); v++) {
-		rating[v].resize(_distance[v].size());
-		std::fill(rating[v].begin(), rating[v].end(), 0);
-		for(int s = 0; s < _distance[v].size(); s++) {
-			if(_distance[v][s] == 0) {
-				rating[v][s] = min_horizontal(_distance, v, s) + min_vertical(_distance, v, s);
-			}
-		}	
-	}
-/*
-	for(int v = 0; v < _distance.size(); v++) {
-		for(int s = 0; s < _distance[v].size(); s++) {
-			std::cout << rating[v][s] << " \t";	
-		}
-	}
-*/
-	unsigned int i, j, maxi = 0;
-	for(int v = 0; v < _distance.size(); v++) {
-		for(int s = 0; s < _distance[v].size(); s++) {
-			if(maxi <= rating[v][s])	{
-				maxi = rating[v][s];
-				i = v;
-				j = s;
-			}
-		}
-	}
-	return std::make_pair(i,j);
-}
-
-unsigned int min_horizontal(std::vector< std::vector< unsigned int > > &_distance, unsigned int i, unsigned int j)
-{
-	unsigned int mini = INF;
-	for(int s = 0; s < _distance[i].size(); s++) {
-		if(_distance[i][s] < mini && s != j) {
-			mini = _distance[i][s];
-		}
-	}
-	return mini == INF ? 0 : mini;
-}
-unsigned int min_vertical(std::vector< std::vector< unsigned int > > &_distance, unsigned int i, unsigned int j)
-{
-	unsigned int mini = INF;
-	for(int v = 0; v < _distance.size(); v++) {
-		if(_distance[v][j] < mini && v != i) {
-			mini = _distance[v][j];
-		}
-	}
-	return mini == INF ? 0 : mini;
-}
