@@ -17,4 +17,4 @@ Jsoncpp
 
 ## Бонус №1
 
-![Demo] (https://github.com/Elena4Max/My_VRP/blob/master/Out/bonus1.gif)
+![Demo] (https://github.com/Elena4Max/My_VRP/blob/master/Out/bonus1.gif  "BONUS 1")
