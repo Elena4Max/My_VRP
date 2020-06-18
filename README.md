@@ -20,3 +20,9 @@ Jsoncpp
 <p align="center">
   <img align="center" src="https://github.com/Elena4Max/My_VRP/blob/master/Out/bonus1.gif" alt="demo"/>
 </p>
+
+## Бонус №2
+
+<p align="center">
+  <img align="center" src="https://github.com/Elena4Max/My_VRP/blob/master/Out/bonus2.gif" alt="demo"/>
+</p>
