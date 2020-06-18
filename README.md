@@ -14,3 +14,7 @@ Jsoncpp
 * `cmake ../`
 * `make`
 * `./main`
+
+## Бонус №1
+
+![Demo] (https://github.com/Elena4Max/My_VRP/blob/master/Out/bonus1.gif)

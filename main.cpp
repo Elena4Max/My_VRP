@@ -7,11 +7,17 @@
 #include <thread>
 #include <stdio.h>
 #include <ctime>
+#include <stdlib.h>
+#include <chrono>
 
 const long long INF = 1e9;
 long long COST;
 long long TIMER;
 long long JOB;
+
+void display_vehicles(const Json::Value &vpr_task_root, const int &i, int &N, int &M, std::vector< std::vector<char> > &_bonus_map);
+void display_shipments(const Json::Value &vpr_task_root, const int &j, int &N, int &M, std::vector< std::vector<char> > &_bonus_map);
+void print_bonus_map(int N, int M, std::vector< std::vector<char> > &_bonus_map);
 
 struct Act
 {
@@ -76,12 +82,12 @@ public:
 	std::string _id; 
 	long long shipment_cost(std::string id);
 	long long delivery_cost(std::string id);
-	long long pick_up(long long shipment_id);
-	long long delivery(long long shipment_id);
+	long long pick_up(long long shipment_id, std::vector< std::vector< char > > &_bonus_map);
+	long long delivery(long long shipment_id, std::vector< std::vector< char > > &_bonus_map);
 	bool is_shipments_empty();
 	bool is_delivery_empty();
 	void clear_cost();
-	long long go_home();
+	long long go_home(std::vector< std::vector< char > > &_bonus_map);
 	Routes _rout;
 private:
 	const long long _capacity; 
@@ -268,9 +274,10 @@ long long Vehicle::delivery_cost(std::string id)
 	}
 	return INF;
 }
-long long Vehicle::pick_up(long long shipment_id)
+long long Vehicle::pick_up(long long shipment_id, std::vector< std::vector< char > > &_bonus_map)
 {
 	calc_map(_coord_x, _coord_y);
+	long long _t_coord_x = _coord_x, _t_coord_y = _coord_y;
 	for(auto &s : _shipments) {
 		if(s._id == std::to_string(shipment_id)) {
 			_coord_x = s._pickup_x;
@@ -279,6 +286,46 @@ long long Vehicle::pick_up(long long shipment_id)
 			_delivery.push_back(s);
 			pick_upped.push_back(s);
 		}	
+	}
+	for(int i = 0; i < _M; i++) {
+		for(int j = 0; j < _N; j++) {
+			if(std::abs(_t_coord_x - _coord_x) > std::abs(_t_coord_y - _coord_y)) {
+				if(_t_coord_x > _coord_x) {
+					char c = _bonus_map[_t_coord_x][_t_coord_y];
+					_bonus_map[_t_coord_x][_t_coord_y] = ' ';
+					_t_coord_x--;
+					_bonus_map[_t_coord_x][_t_coord_y] = c;
+					print_bonus_map(_N, _M, _bonus_map);
+				}
+				else {
+					if(_t_coord_x < _coord_x) {
+						char c = _bonus_map[_t_coord_x][_t_coord_y];
+						_bonus_map[_t_coord_x][_t_coord_y] = ' ';
+						_t_coord_x++;
+						_bonus_map[_t_coord_x][_t_coord_y] = c;
+						print_bonus_map(_N, _M, _bonus_map);
+					}
+				}
+			}
+			else {
+				if(_t_coord_y > _coord_y) {
+					char c = _bonus_map[_t_coord_x][_t_coord_y];
+					_bonus_map[_t_coord_x][_t_coord_y] = ' ';
+					_t_coord_y--;
+					_bonus_map[_t_coord_x][_t_coord_y] = c;
+					print_bonus_map(_N, _M, _bonus_map);
+				}
+				else {
+					if(_t_coord_y < _coord_y) {
+						char c = _bonus_map[_t_coord_x][_t_coord_y];
+						_bonus_map[_t_coord_x][_t_coord_y] = ' ';
+						_t_coord_y++;
+						_bonus_map[_t_coord_x][_t_coord_y] = c;
+						print_bonus_map(_N, _M, _bonus_map);
+					}
+				}
+			}
+		}
 	}
 	if(_rout._start == -1) {
 		_rout._start = TIMER;
@@ -292,9 +339,10 @@ long long Vehicle::pick_up(long long shipment_id)
 	_rout._act.push_back(act);
 	return _map[_coord_x][_coord_y] * _distance_price;
 }
-long long Vehicle::delivery(long long shipment_id)
+long long Vehicle::delivery(long long shipment_id, std::vector< std::vector< char > > &_bonus_map)
 {
 	calc_map(_coord_x, _coord_y);
+	long long _t_coord_x = _coord_x, _t_coord_y = _coord_y;
 	for(auto &d : _delivery) {
 		if(d._id == std::to_string(shipment_id)) {
 			_coord_x = d._delivery_x;
@@ -303,6 +351,46 @@ long long Vehicle::delivery(long long shipment_id)
 			_delivery.remove(d);
 			break;
 		}	
+	}
+	for(int i = 0; i < _M; i++) {
+		for(int j = 0; j < _N; j++) {
+			if(std::abs(_t_coord_x - _coord_x) > std::abs(_t_coord_y - _coord_y)) {
+				if(_t_coord_x > _coord_x) {
+					char c = _bonus_map[_t_coord_x][_t_coord_y];
+					_bonus_map[_t_coord_x][_t_coord_y] = ' ';
+					_t_coord_x--;
+					_bonus_map[_t_coord_x][_t_coord_y] = c;
+					print_bonus_map(_N, _M, _bonus_map);
+				}
+				else {
+					if(_t_coord_x < _coord_x) {
+						char c = _bonus_map[_t_coord_x][_t_coord_y];
+						_bonus_map[_t_coord_x][_t_coord_y] = ' ';
+						_t_coord_x++;
+						_bonus_map[_t_coord_x][_t_coord_y] = c;
+						print_bonus_map(_N, _M, _bonus_map);
+					}
+				}
+			}
+			else {
+				if(_t_coord_y > _coord_y) {
+					char c = _bonus_map[_t_coord_x][_t_coord_y];
+					_bonus_map[_t_coord_x][_t_coord_y] = ' ';
+					_t_coord_y--;
+					_bonus_map[_t_coord_x][_t_coord_y] = c;
+					print_bonus_map(_N, _M, _bonus_map);
+				}
+				else {
+					if(_t_coord_y < _coord_y) {
+						char c = _bonus_map[_t_coord_x][_t_coord_y];
+						_bonus_map[_t_coord_x][_t_coord_y] = ' ';
+						_t_coord_y++;
+						_bonus_map[_t_coord_x][_t_coord_y] = c;
+						print_bonus_map(_N, _M, _bonus_map);
+					}
+				}
+			}
+		}
 	}
 	TIMER += _map[_coord_x][_coord_y] - 1;
 	Act act;
@@ -328,15 +416,56 @@ void Vehicle::clear_cost()
 		d._cost = 0;
 	}
 }
-long long Vehicle::go_home()
+long long Vehicle::go_home(std::vector< std::vector< char > > &_bonus_map)
 {
 	calc_map(_coord_x, _coord_y);
+	long long _t_coord_x = _coord_x, _t_coord_y = _coord_y;
+	_coord_x = _home_coord_x;
+	_coord_y = _home_coord_y;
+	for(int i = 0; i < _M; i++) {
+		for(int j = 0; j < _N; j++) {
+			if(std::abs(_t_coord_x - _coord_x) > std::abs(_t_coord_y - _coord_y)) {
+				if(_t_coord_x > _coord_x) {
+					char c = _bonus_map[_t_coord_x][_t_coord_y];
+					_bonus_map[_t_coord_x][_t_coord_y] = ' ';
+					_t_coord_x--;
+					_bonus_map[_t_coord_x][_t_coord_y] = c;
+					print_bonus_map(_N, _M, _bonus_map);
+				}
+				else {
+					if(_t_coord_x < _coord_x) {
+						char c = _bonus_map[_t_coord_x][_t_coord_y];
+						_bonus_map[_t_coord_x][_t_coord_y] = ' ';
+						_t_coord_x++;
+						_bonus_map[_t_coord_x][_t_coord_y] = c;
+						print_bonus_map(_N, _M, _bonus_map);
+					}
+				}
+			}
+			else {
+				if(_t_coord_y > _coord_y) {
+					char c = _bonus_map[_t_coord_x][_t_coord_y];
+					_bonus_map[_t_coord_x][_t_coord_y] = ' ';
+					_t_coord_y--;
+					_bonus_map[_t_coord_x][_t_coord_y] = c;
+					print_bonus_map(_N, _M, _bonus_map);
+				}
+				else {
+					if(_t_coord_y < _coord_y) {
+						char c = _bonus_map[_t_coord_x][_t_coord_y];
+						_bonus_map[_t_coord_x][_t_coord_y] = ' ';
+						_t_coord_y++;
+						_bonus_map[_t_coord_x][_t_coord_y] = c;
+						print_bonus_map(_N, _M, _bonus_map);
+					}
+				}
+			}
+		}
+	}
 	_rout._end = TIMER;
 	return (_map[_home_coord_x][_home_coord_y] - 1) * _distance_price;
 }
 
-void display_vehicles(const Json::Value &vpr_task_root, const int &i, int &N, int &M);
-void display_shipments(const Json::Value &vpr_task_root, const int &j, int &N, int &M);
 Vehicle init(const Json::Value &vpr_task_root, const int &i, int N, int M);
 
 int main()
@@ -350,15 +479,22 @@ int main()
 	int i = 0, j = 0, M = 0, N = 0;
 
 	std::vector< Vehicle > vehicles;
-
+//#ifdef _BONUS1
+	std::vector< std::vector<char> > _bonus_map;
+	_bonus_map.resize(200);
+	for(long long i = 0; i < 200; i++) {
+		_bonus_map[i].resize(200);
+	}
+//#endif
 	while(!vpr_task_root["vehicles"][i]["id"].isNull()) {
-	    	display_vehicles(vpr_task_root, i, N, M);
+	    	display_vehicles(vpr_task_root, i, N, M, _bonus_map);
 		i++;
 	}
 	while(!vpr_task_root["shipments"][j]["id"].isNull()) {
-	    	display_shipments(vpr_task_root, j, N, M);
+	    	display_shipments(vpr_task_root, j, N, M, _bonus_map);
 		j++;
 	}
+	print_bonus_map(N + 1, M + 1, _bonus_map);
 	for(long long v = 0; v < i; v++) {
 		vehicles.push_back( init(vpr_task_root, v, N + 1, M + 1) );	
 	}	
@@ -452,7 +588,7 @@ for(long long k = 0; k < 2 * j; k++) {
 			}
 		}	
 	}
-	printf("\033[31mVEHICLE %llu %s %llu %s", coord_to_go.first, " GOES TO ",  coord_to_go.second, "\033[0m\n");
+	//printf("\033[31mVEHICLE %llu %s %llu %s", coord_to_go.first, " GOES TO ",  coord_to_go.second, "\033[0m\n");
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -462,10 +598,10 @@ for(long long k = 0; k < 2 * j; k++) {
 			Shipment s = vehicles[v].find_task_in_shipments(coord_to_go.second);
 			Shipment d = vehicles[v].find_task_in_delivery(coord_to_go.second);
 			if(s._id != "NULL") {
-				COST += vehicles[v].pick_up(coord_to_go.second);
+				COST += vehicles[v].pick_up(coord_to_go.second, _bonus_map);
 			}
 			else {
-				COST += vehicles[v].delivery(coord_to_go.second);
+				COST += vehicles[v].delivery(coord_to_go.second, _bonus_map);
 			}
 			////
 		}
@@ -473,10 +609,10 @@ for(long long k = 0; k < 2 * j; k++) {
 	for(long long v = 0; v < i; v++) {
 		vehicles[v].clear_cost();
 	}
-	std::cout << "COST = " << COST << std::endl;
+	//std::cout << "COST = " << COST << std::endl;
 }
 	for(long long v = 0; v < i; v++) {
-		COST += vehicles[v].go_home();
+		COST += vehicles[v].go_home(_bonus_map);
 	}
 
 ///////////////////////////////////////////////////////////
@@ -527,6 +663,13 @@ for(long long k = 0; k < 2 * j; k++) {
     	long long end_time = clock();
 	long long search_time = end_time - start_time;
 	std::cout << "search_time = " << search_time / 1000.0 << std::endl;
+
+#ifdef _BONUS2
+std::cout << "bomus2" << std::endl;
+#endif
+#ifdef _BONUS3
+std::cout << "bomus3" << std::endl;
+#endif
 	return 0;
 }       
 
@@ -541,13 +684,14 @@ Vehicle init(const Json::Value &vpr_task_root, const int &i, int N, int M)
 	return temp;
 	
 }
-void display_vehicles(const Json::Value &vpr_task_root, const int &i, int &N, int &M)
+void display_vehicles(const Json::Value &vpr_task_root, const int &i, int &N, int &M, std::vector< std::vector<char> > &_bonus_map)
 {
     	std::string _id = vpr_task_root["vehicles"][i]["id"].asString();
 	long long _capacity = vpr_task_root["vehicles"][i]["capacity"].asUInt();
 	long long _distance_price = vpr_task_root["vehicles"][i]["distance_price"].asUInt();
 	long long _coord_x = vpr_task_root["vehicles"][i]["coord"]["x"].asUInt();
 	long long _coord_y = vpr_task_root["vehicles"][i]["coord"]["y"].asUInt();
+	_bonus_map[_coord_x][_coord_y] = 'V';
 	if(M < _coord_x) {
 		M = _coord_x;		
 	}	
@@ -556,7 +700,7 @@ void display_vehicles(const Json::Value &vpr_task_root, const int &i, int &N, in
 	}
 }
 
-void display_shipments(const Json::Value &vpr_task_root, const int &j, int &N, int &M)
+void display_shipments(const Json::Value &vpr_task_root, const int &j, int &N, int &M, std::vector< std::vector<char> > &_bonus_map)
 {
     	std::string _id = vpr_task_root["shipments"][j]["id"].asString();
 	long long _pickup_x = vpr_task_root["shipments"][j]["pickup"]["x"].asUInt();
@@ -566,7 +710,8 @@ void display_shipments(const Json::Value &vpr_task_root, const int &j, int &N, i
 	long long _capacityDemand = vpr_task_root["shipments"][j]["capacityDemand"].asUInt();
 	long long _max_x = std::max(_pickup_x, _delivery_x);
 	long long _max_y = std::max(_pickup_y, _delivery_y);
-
+	_bonus_map[_pickup_x][_pickup_y] = 'S';
+	_bonus_map[_delivery_x][_delivery_y] = 'D';
 	if(M < _max_x) {
 		M = _max_x;		
 	}	
@@ -574,4 +719,28 @@ void display_shipments(const Json::Value &vpr_task_root, const int &j, int &N, i
 		N = _max_y;		
 	}
 }
+
+void print_bonus_map(int N, int M, std::vector< std::vector<char> > &_bonus_map)
+{
+	system("clear");
+	for(long long i = 0; i < M; i++) {
+		for(long long j = 0; j < N; j++) {
+			if(_bonus_map[i][j] == 'V') {
+				printf("\033[31m%c%s", _bonus_map[i][j], "\033[0m");
+			}	
+			else {
+				if(_bonus_map[i][j] == 'S' || _bonus_map[i][j] == 'D') {
+					printf("\033[32m%c%s", _bonus_map[i][j], "\033[0m");
+				}
+				else {
+					printf("%s", " ");
+				}
+			}
+		}
+		printf("\n");	
+	}
+	std::this_thread::sleep_for(std::chrono::milliseconds(70));
+}
+
+
 

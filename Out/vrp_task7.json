@@ -4,13 +4,19 @@
 	    "id": "1",
 	    "capacity": 2,
 	    "distance_price": 1,
-            "coord": { "x": 2, "y": 0 }
+            "coord": { "x": 5, "y": 5 }
 	},
 	{
 	    "id": "2",
-	    "capacity": 3,
+	    "capacity": 5,
 	    "distance_price": 1,
             "coord": { "x": 2, "y": 5 }
+	},
+	{
+	    "id": "3",
+	    "capacity": 3,
+	    "distance_price": 1,
+            "coord": { "x": 10, "y": 15 }
 	}
     ],
     "shipments": [
@@ -23,26 +29,56 @@
         {
             "id": "1",
             "pickup": { "x": 1, "y": 5 },
-            "delivery": { "x": 2, "y": 1 },
-            "capacityDemand": 1
+            "delivery": { "x": 3, "y": 1 },
+            "capacityDemand": 2
         },
         {
             "id": "2",
             "pickup": { "x": 2, "y": 4 },
-            "delivery": { "x": 2, "y": 1 },
-            "capacityDemand": 1
+            "delivery": { "x": 4, "y": 1 },
+            "capacityDemand": 3
         },
         {
             "id": "3",
             "pickup": { "x": 3, "y": 4 },
-            "delivery": { "x": 2, "y": 1 },
+            "delivery": { "x": 5, "y": 1 },
             "capacityDemand": 1
         },
         {
             "id": "4",
             "pickup": { "x": 3, "y": 5 },
-            "delivery": { "x": 2, "y": 1 },
+            "delivery": { "x": 6, "y": 1 },
             "capacityDemand": 1
+        },
+	{
+            "id": "5",
+            "pickup": { "x": 13, "y": 15 },
+            "delivery": { "x": 12, "y": 11 },
+            "capacityDemand": 2
+        },
+	{
+            "id": "6",
+            "pickup": { "x": 3, "y": 15 },
+            "delivery": { "x": 9, "y": 1 },
+            "capacityDemand": 2
+        },
+	{
+            "id": "7",
+            "pickup": { "x": 2, "y": 15 },
+            "delivery": { "x": 8, "y": 7 },
+            "capacityDemand": 1
+        },
+	{
+            "id": "8",
+            "pickup": { "x": 3, "y": 10 },
+            "delivery": { "x": 6, "y": 6 },
+            "capacityDemand": 1
+        },
+	{
+            "id": "9",
+            "pickup": { "x": 4, "y": 20 },
+            "delivery": { "x": 0, "y": 0 },
+            "capacityDemand": 2
         }
     ]
 }
