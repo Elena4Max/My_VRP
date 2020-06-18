@@ -1,6 +1,6 @@
-#include <iostream>
 #include <fstream>
 #include <ctime>
+#include <exception>
 #include "Vehicle.h"
 #include "display.h"
 #include "init.h"
@@ -14,8 +14,14 @@ int main()
 	Json::Reader reader;
 	Json::Value vpr_task_root;
 
-	std::ifstream vpr_task_file("vrp_task7.json");
-    	vpr_task_file >> vpr_task_root;
+	try { 
+		std::ifstream vpr_task_file("vrp_task.json");
+    		vpr_task_file >> vpr_task_root;
+	}
+	catch(std::exception& e) {
+		printf("Something wrong!\n");
+		return 0;
+	}
 	int i = 0, j = 0, M = 0, N = 0;
 
 	std::vector< Vehicle > vehicles;
@@ -33,7 +39,13 @@ int main()
 		j++;
 	}
 #ifdef _BONUS1
-	print_bonus_map(N + 1, M + 1);
+	try { 
+		print_bonus_map(N + 1, M + 1);
+	}
+	catch(const char *e) {
+		printf("Something wrong!\n%s\n", e);
+		return 0;
+	}
 #endif
 	for(long long v = 0; v < i; v++) {
 		vehicles.push_back( init(vpr_task_root, v, N + 1, M + 1) );	

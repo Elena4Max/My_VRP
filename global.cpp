@@ -4,6 +4,10 @@ std::vector< std::vector<char> > _bonus_map;
 
 void print_bonus_map(int N, int M)
 {
+	if(N >= 200 || M >= 200) {
+		throw "Height or width over 200";
+		return;
+	}
 	system("clear");
 	#ifdef _BONUS2
 		printf("Iteration # %llu \n", k);
