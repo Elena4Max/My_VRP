@@ -1,6 +1,5 @@
 #pragma once
 #include <list>
-#include <iostream>
 #include "global.h"
 #include "Point.h"
 #include "Routes.h"
@@ -19,7 +18,6 @@ public:
 	void delete_task(const Shipment &shipment);
 	const Shipment find_task_in_shipments(const long long shipment_id);
 	const Shipment find_task_in_delivery(const long long shipment_id);
-	void print();
 	void calc_map(long long x, long long y);
 	const long long get_capacity();
 	void calc_shipments_pickup();

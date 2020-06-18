@@ -64,35 +64,6 @@ const Shipment Vehicle::find_task_in_delivery(const long long shipment_id)
 	s._id = "NULL";
 	return s;
 }
-void Vehicle::print()
-{
-	std::cout << "-----------------Vehicle------------------" << std::endl;
-	std::cout <<    "_id " << _id << " " <<
-			"_capacity_picked " << _capacity_picked << " " <<
-			"_capacity " << _capacity << " " <<
-			"_distance_price " << _distance_price << " " <<
-			"_home_coord_x " << _home_coord_x <<   " " <<
-			"_home_coord_y " << _home_coord_y << " " <<
-			"_coord_x " << _coord_x << " " <<
-			"_coord_y " << _coord_y << std::endl;
-	std::cout << "-----------------Shipment-----------------" << std::endl;
-	for(auto s : _shipments) {
-		std::cout << s._id << " cost = " << s._cost << std::endl;
-	}
-	std::cout << std::endl;
-	std::cout << "-----------------Delivery-----------------" << std::endl;
-	for(auto d : _delivery) {
-		std::cout << d._id << " cost = " << d._cost << std::endl;
-	}
-	std::cout << std::endl;
-	std::cout << "-----------------Map----------------------" << std::endl;
-	for(auto m : _map) {
-		for(auto mm : m) {
-			std::cout << mm << " ";
-		}
-		std::cout << std::endl;
-	}
-}
 const long long Vehicle::get_capacity()
 {
 	return (_capacity - _capacity_picked);

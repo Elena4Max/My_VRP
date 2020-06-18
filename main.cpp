@@ -1,7 +1,6 @@
 #include <fstream>
 #include <ctime>
 #include <exception>
-#include "Vehicle.h"
 #include "display.h"
 #include "init.h"
 
@@ -190,7 +189,7 @@ for(k = 0; k < 2 * j; k++) {
 ////////////////////////////////////////////////////////////////////////////////////////////////
     	long long end_time = clock();
 	long long search_time = end_time - start_time;
-	std::cout << "search_time = " << search_time / 1000.0 << std::endl;
+	printf("search_time = %f", search_time / 1000.0);
 	return 0;
 }       
 
