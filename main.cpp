@@ -5,16 +5,17 @@
 #include "init.h"
 
 long long COST;
-long long k;
+extern long long k;
 
 int main()
 {
+
     	long long start_time = clock();
 	Json::Reader reader;
 	Json::Value vpr_task_root;
 
 	try { 
-		std::ifstream vpr_task_file("vrp_task.json");
+		std::ifstream vpr_task_file("vrp_task1.json");
     		vpr_task_file >> vpr_task_root;
 	}
 	catch(std::exception& e) {
@@ -189,7 +190,7 @@ for(k = 0; k < 2 * j; k++) {
 ////////////////////////////////////////////////////////////////////////////////////////////////
     	long long end_time = clock();
 	long long search_time = end_time - start_time;
-	printf("search_time = %f", search_time / 1000.0);
+	printf("search_time = %f\n", search_time / 1000.0);
 	return 0;
 }       
 

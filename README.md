@@ -17,11 +17,19 @@ Jsoncpp
 
 ## Бонус №1
 
+* `cmake -DBONUS=bonus1 ../`
+* `make`
+* `./main`
+
 <p align="center">
   <img align="center" src="https://github.com/Elena4Max/My_VRP/blob/master/Out/bonus1.gif" alt="demo"/>
 </p>
 
 ## Бонус №2
+
+* `cmake -DBONUS=bonus2 ../`
+* `make`
+* `./main`
 
 <p align="center">
   <img align="center" src="https://github.com/Elena4Max/My_VRP/blob/master/Out/bonus2.gif" alt="demo"/>

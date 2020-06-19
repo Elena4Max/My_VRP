@@ -12,8 +12,17 @@ add_library(routes Routes.cpp Routes.h)
 add_library(shipment Shipment.cpp Shipment.h)
 add_library(lib ${SOURCES} ${HEADERS})
 
-set(SOURCE_EXE main.cpp)			
+set(SOURCE_EXE main.cpp)
+
+if(BONUS STREQUAL "bonus1")			
 add_definitions( -D_BONUS1 )
+endif(BONUS STREQUAL "bonus1")
+
+if(BONUS STREQUAL "bonus2")			
+add_definitions( -D_BONUS1 )
+add_definitions( -D_BONUS2 )
+endif(BONUS STREQUAL "bonus2")
+
 add_executable(main ${SOURCE_EXE})	
 
 target_link_libraries(main jsoncpp lib point act routes shipment ${CMAKE_THREAD_LIBS_INIT})

@@ -1,6 +1,7 @@
 #include "global.h"
 
 std::vector< std::vector<char> > _bonus_map;
+long long k;
 
 void print_bonus_map(int N, int M)
 {
