@@ -5,8 +5,8 @@ long long k;
 
 void print_bonus_map(int N, int M)
 {
-	if(N >= 200 || M >= 200) {
-		throw "Height or width over 200";
+	if(N > 131 || M > 36) {
+		throw "Height > 35 or width > 130";
 		return;
 	}
 	system("clear");

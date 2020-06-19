@@ -15,7 +15,7 @@ int main()
 	Json::Value vpr_task_root;
 
 	try { 
-		std::ifstream vpr_task_file("vrp_task1.json");
+		std::ifstream vpr_task_file("vrp_task8.json");
     		vpr_task_file >> vpr_task_root;
 	}
 	catch(std::exception& e) {
@@ -26,9 +26,9 @@ int main()
 
 	std::vector< Vehicle > vehicles;
 
-	_bonus_map.resize(200);
-	for(long long i = 0; i < 200; i++) {
-		_bonus_map[i].resize(200);
+	_bonus_map.resize(36);
+	for(long long i = 0; i < 36; i++) {
+		_bonus_map[i].resize(131);
 	}
 	while(!vpr_task_root["vehicles"][i]["id"].isNull()) {
 	    	display_vehicles(vpr_task_root, i, N, M);
